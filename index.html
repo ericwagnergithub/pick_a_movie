@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pick A Movie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Pick A Movie 🎬</h1>
+      <p class="subtitle">Discovery Queue + smart ranking for what to watch next.</p>
+    </header>
+
+    <main>
+      <!-- Main menu -->
+      <section id="screen-main-menu" class="screen">
+        <h2>Main Menu</h2>
+        <div class="card">
+          <h3>Modes</h3>
+          <div class="button-column">
+            <button id="btn-start-discovery">Start / Continue Discovery Queue</button>
+            <button id="btn-rank-watchlist">Rank your Watchlist</button>
+            <button id="btn-rank-seen">Rank your Seen Movies</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Your stats</h3>
+          <ul class="stats-list">
+            <li><span>Watchlist:</span> <span id="stat-watchlist-count">0</span></li>
+            <li><span>Seen:</span> <span id="stat-seen-count">0</span></li>
+            <li><span>Not interested:</span> <span id="stat-not-interested-count">0</span></li>
+            <li><span>Unreviewed in Discovery Queue:</span> <span id="stat-unreviewed-count">0</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Discovery Queue -->
+      <section id="screen-discovery" class="screen hidden">
+        <div class="card">
+          <div class="screen-header">
+            <h2>Discovery Queue</h2>
+            <button class="link-button" id="btn-discovery-back">← Back to main menu</button>
+          </div>
+          <p class="small-text">
+            Review movies in batches of 10. For each one, say if you've seen it, want to watch it, or aren't interested.
+          </p>
+
+          <div id="discovery-content">
+            <p id="discovery-progress" class="small-text"></p>
+            <div id="discovery-movie-title" class="movie-title-large"></div>
+
+            <div id="discovery-buttons" class="button-column">
+              <button id="btn-discovery-seen">I've seen this</button>
+              <button id="btn-discovery-watchlist">I want to watch this</button>
+              <button id="btn-discovery-not-interested">I'm not interested</button>
+            </div>
+
+            <p id="discovery-empty-message" class="small-text muted"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ranking screen (used for Watchlist + Seen) -->
+      <section id="screen-ranking" class="screen hidden">
+        <div class="card">
+          <div class="screen-header">
+            <h2 id="ranking-title">Ranking</h2>
+            <button class="link-button" id="btn-ranking-back">← Back to main menu</button>
+          </div>
+          <p id="ranking-description" class="small-text">
+            Choose which movie you’d rather watch / which you like more. Over time, this builds your ranking.
+          </p>
+
+          <div id="ranking-pair-area">
+            <div id="ranking-pair" class="ranking-pair-container">
+              <div class="ranking-option">
+                <div class="movie-title-large" id="rank-left-title"></div>
+                <button id="btn-rank-left">Prefer this</button>
+              </div>
+
+              <div class="ranking-vs">vs</div>
+
+              <div class="ranking-option">
+                <div class="movie-title-large" id="rank-right-title"></div>
+                <button id="btn-rank-right">Prefer this</button>
+              </div>
+            </div>
+
+            <p id="ranking-empty-message" class="small-text muted"></p>
+          </div>
+
+          <div class="ranking-list-wrapper">
+            <h3>Current ranking</h3>
+            <ol id="ranking-list"></ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Pick A Movie • data stored locally in your browser</p>
+    </footer>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

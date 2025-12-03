@@ -1,0 +1,210 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #020617;
+  color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.app {
+  width: 100%;
+  max-width: 900px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin-top: 0.4rem;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.screen {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.card {
+  background: #020617;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border: 1px solid #1f2937;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem;
+}
+
+.screen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card h2,
+.card h3 {
+  margin-top: 0;
+}
+
+.button-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: #4f46e5;
+  color: white;
+  font-weight: 500;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, opacity 0.1s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.6);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+button[disabled] {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.link-button {
+  background: transparent;
+  color: #9ca3af;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+
+.link-button:hover {
+  background: rgba(148, 163, 184, 0.12);
+  box-shadow: none;
+  transform: none;
+}
+
+.movie-title-large {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0.6rem 0 0.4rem;
+}
+
+.small-text {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.stats-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.15rem 0;
+}
+
+footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Ranking pair layout */
+
+.ranking-pair-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.ranking-option {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #020617;
+  border: 1px solid #1f2937;
+}
+
+.ranking-option button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.ranking-vs {
+  align-self: center;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.ranking-list-wrapper {
+  margin-top: 1.25rem;
+}
+
+#ranking-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.95rem;
+}
+
+/* Discovery buttons on mobile */
+
+@media (max-width: 640px) {
+  body {
+    padding: 1rem;
+  }
+
+  .ranking-pair-container {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-vs {
+    text-align: center;
+    margin: 0.25rem 0;
+  }
+}
