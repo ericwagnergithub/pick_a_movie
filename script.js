@@ -41,6 +41,66 @@ function saveState() {
   }
 }
 
+function exportStateToFile() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    state
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "pick_a_movie_data.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importStateFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const text = event.target.result;
+      const parsed = JSON.parse(text);
+
+      if (!parsed || typeof parsed !== "object" || !parsed.state) {
+        alert("This file doesn't look like Pick A Movie data.");
+        return;
+      }
+
+      const importedState = parsed.state;
+
+      // Basic shape check
+      if (
+        !importedState.classifications ||
+        typeof importedState.classifications !== "object" ||
+        !Array.isArray(importedState.rankingWatchlist) ||
+        !Array.isArray(importedState.rankingSeen)
+      ) {
+        alert("Imported data is missing required fields.");
+        return;
+      }
+
+      state = importedState;
+      saveState();
+      recomputeStats();
+      alert("Data imported successfully!");
+    } catch (err) {
+      console.error("Failed to import data:", err);
+      alert("There was a problem reading that file.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+
 // --- DOM elements ---
 
 const screenMainMenu = document.getElementById("screen-main-menu");
@@ -57,6 +117,10 @@ const statNotInterestedCount = document.getElementById(
   "stat-not-interested-count"
 );
 const statUnreviewedCount = document.getElementById("stat-unreviewed-count");
+
+const btnExportData = document.getElementById("btn-export-data");
+const btnImportData = document.getElementById("btn-import-data");
+const importFileInput = document.getElementById("import-file-input");
 
 // Discovery elements
 const btnDiscoveryBack = document.getElementById("btn-discovery-back");
@@ -394,6 +458,25 @@ function attachEventListeners() {
   btnRankSeen.addEventListener("click", () => {
     startRanking("seen");
   });
+
+  
+  // export / import
+  btnExportData.addEventListener("click", () => {
+    exportStateToFile();
+  });
+
+  btnImportData.addEventListener("click", () => {
+    importFileInput.value = ""; // reset so selecting same file works
+    importFileInput.click();
+  });
+
+  importFileInput.addEventListener("change", () => {
+    const file = importFileInput.files && importFileInput.files[0];
+    if (file) {
+      importStateFromFile(file);
+    }
+  });
+
 
   // Discovery
   btnDiscoveryBack.addEventListener("click", () => {
