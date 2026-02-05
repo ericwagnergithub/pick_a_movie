@@ -104,6 +104,40 @@ button[disabled] {
   box-shadow: none;
 }
 
+/* Discovery queue button colors */
+
+.btn-watchlist {
+  background: #10b981;
+}
+
+.btn-watchlist:hover {
+  background: #059669;
+}
+
+.btn-seen {
+  background: #3b82f6;
+}
+
+.btn-seen:hover {
+  background: #2563eb;
+}
+
+.btn-not-interested {
+  background: #ef4444;
+}
+
+.btn-not-interested:hover {
+  background: #dc2626;
+}
+
+.btn-skip {
+  background: #6b7280;
+}
+
+.btn-skip:hover {
+  background: #4b5563;
+}
+
 .link-button {
   background: transparent;
   color: #9ca3af;
@@ -231,12 +265,20 @@ footer {
     padding: 1rem;
   }
 
+  /* Keep side-by-side ranking on mobile */
   .ranking-pair-container {
-    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .ranking-option {
+    padding: 0.5rem;
   }
 
   .ranking-vs {
-    text-align: center;
-    margin: 0.25rem 0;
+    font-size: 0.8rem;
+  }
+
+  .movie-title-large {
+    font-size: 1.1rem;
   }
 }
