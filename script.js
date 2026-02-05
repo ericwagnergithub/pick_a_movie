@@ -256,8 +256,8 @@ function populateFilters() {
   // Extract unique genres from all movies
   const allGenres = new Set();
   MOVIES.forEach(movie => {
-    if (movie.genres) {
-      movie.genres.split(', ').forEach(genre => allGenres.add(genre.trim()));
+    if (movie.genres && Array.isArray(movie.genres)) {
+      movie.genres.forEach(genre => allGenres.add(genre.trim()));
     }
   });
 
@@ -272,8 +272,8 @@ function populateFilters() {
     genreFiltersEl.appendChild(chip);
   });
 
-  // Create decade filter chips
-  const decades = ['1920s', '1930s', '1940s', '1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+  // Create decade filter chips (newest first)
+  const decades = ['2020s', '2010s', '2000s', '1990s', '1980s', '1970s', '1960s', '1950s', '1940s', '1930s', '1920s'];
   decadeFiltersEl.innerHTML = '';
   decades.forEach(decade => {
     const chip = document.createElement('button');
