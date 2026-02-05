@@ -74,7 +74,15 @@
 
           <div id="discovery-content">
             <p id="discovery-progress" class="small-text"></p>
-            <div id="discovery-movie-title" class="movie-title-large"></div>
+
+            <div class="movie-card">
+              <img id="discovery-poster" class="movie-poster" src="" alt="Movie poster" />
+              <div class="movie-info">
+                <div id="discovery-movie-title" class="movie-title-large"></div>
+                <div id="discovery-movie-meta" class="movie-meta"></div>
+                <div id="discovery-movie-overview" class="movie-overview"></div>
+              </div>
+            </div>
 
             <div id="discovery-buttons" class="button-column">
               <button id="btn-discovery-seen" class="btn-seen">I've seen this</button>
@@ -102,14 +110,18 @@
           <div id="ranking-pair-area">
             <div id="ranking-pair" class="ranking-pair-container">
               <div class="ranking-option">
+                <img id="rank-left-poster" class="ranking-poster" src="" alt="Movie poster" />
                 <div class="movie-title-large" id="rank-left-title"></div>
+                <div id="rank-left-meta" class="movie-meta-small"></div>
                 <button id="btn-rank-left">Prefer this</button>
               </div>
 
               <div class="ranking-vs">vs</div>
 
               <div class="ranking-option">
+                <img id="rank-right-poster" class="ranking-poster" src="" alt="Movie poster" />
                 <div class="movie-title-large" id="rank-right-title"></div>
+                <div id="rank-right-meta" class="movie-meta-small"></div>
                 <button id="btn-rank-right">Prefer this</button>
               </div>
             </div>
@@ -132,6 +144,7 @@
 
   <!-- New: big movie list in its own file -->
   <script src="movies.js" defer></script>
+  <script src="movie_metadata.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>

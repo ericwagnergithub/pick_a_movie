@@ -131,6 +131,28 @@ Create a shareable web app that anyone can use to build their personal movie wat
    - "Why is this ranked here?" explanations
    - Ranking by genre or decade subcategories
 
+### Phase 5: Data Import/Export Enhancements (FUTURE)
+
+**Goal:** Make it easier to onboard existing movie data
+
+1. **Letterboxd CSV Import**
+   - Allow users to import their Letterboxd export files
+   - Parse `watched.csv` and `watchlist.csv` from Letterboxd
+   - Match movies by title + year to our dataset
+   - Auto-classify as "Seen" or "Watchlist"
+   - Handle unmatched movies (not in our 1000 movie dataset)
+   - Show preview before importing
+
+2. **Import from Other Services**
+   - IMDB lists import (CSV)
+   - Trakt.tv export support
+   - Generic CSV format template
+
+3. **Enhanced Export**
+   - Export to multiple formats (JSON, CSV)
+   - Include timestamps and metadata
+   - Export filtered lists (by genre, rating, etc.)
+
 ---
 
 ## Technical Specifications

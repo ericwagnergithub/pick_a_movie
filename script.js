@@ -154,6 +154,9 @@ const importFileInput = document.getElementById("import-file-input");
 const btnDiscoveryBack = document.getElementById("btn-discovery-back");
 const discoveryProgress = document.getElementById("discovery-progress");
 const discoveryMovieTitle = document.getElementById("discovery-movie-title");
+const discoveryPoster = document.getElementById("discovery-poster");
+const discoveryMovieMeta = document.getElementById("discovery-movie-meta");
+const discoveryMovieOverview = document.getElementById("discovery-movie-overview");
 const discoveryEmptyMessage = document.getElementById("discovery-empty-message");
 const btnDiscoverySeen = document.getElementById("btn-discovery-seen");
 const btnDiscoveryWatchlist = document.getElementById(
@@ -170,6 +173,10 @@ const rankingDescription = document.getElementById("ranking-description");
 const btnRankingBack = document.getElementById("btn-ranking-back");
 const rankLeftTitle = document.getElementById("rank-left-title");
 const rankRightTitle = document.getElementById("rank-right-title");
+const rankLeftPoster = document.getElementById("rank-left-poster");
+const rankRightPoster = document.getElementById("rank-right-poster");
+const rankLeftMeta = document.getElementById("rank-left-meta");
+const rankRightMeta = document.getElementById("rank-right-meta");
 const btnRankLeft = document.getElementById("btn-rank-left");
 const btnRankRight = document.getElementById("btn-rank-right");
 const rankingListEl = document.getElementById("ranking-list");
@@ -273,8 +280,41 @@ function renderDiscovery() {
 
   const movieId = currentBatch[currentBatchIndex];
   const movie = MOVIES.find((m) => m.id === movieId);
+  const metadata = MOVIE_METADATA?.[movieId];
 
+  // Update title
   discoveryMovieTitle.textContent = movie ? movie.title : "Unknown movie";
+
+  // Update poster
+  if (metadata?.poster) {
+    discoveryPoster.src = metadata.poster;
+    discoveryPoster.alt = `${movie?.title || "Movie"} poster`;
+    discoveryPoster.classList.remove("hidden");
+  } else {
+    discoveryPoster.classList.add("hidden");
+  }
+
+  // Update metadata (rating, year, genres)
+  const metaParts = [];
+  if (metadata?.rating) {
+    metaParts.push(`<span class="movie-rating">★ ${metadata.rating.toFixed(1)}</span>`);
+  }
+  if (movie?.year) {
+    metaParts.push(`<span class="movie-year">${movie.year}</span>`);
+  }
+  if (movie?.genres) {
+    metaParts.push(`<span class="movie-genres">${movie.genres}</span>`);
+  }
+  discoveryMovieMeta.innerHTML = metaParts.join("");
+
+  // Update overview
+  if (metadata?.overview) {
+    discoveryMovieOverview.textContent = metadata.overview;
+    discoveryMovieOverview.style.display = "block";
+  } else {
+    discoveryMovieOverview.style.display = "none";
+  }
+
   discoveryProgress.textContent = `Movie ${currentBatchIndex + 1} of ${
     currentBatch.length
   } in this batch`;
@@ -457,9 +497,50 @@ function pickNextPair() {
 
   const leftMovie = MOVIES.find((m) => m.id === currentLeftId);
   const rightMovie = MOVIES.find((m) => m.id === currentRightId);
+  const leftMetadata = MOVIE_METADATA?.[currentLeftId];
+  const rightMetadata = MOVIE_METADATA?.[currentRightId];
 
+  // Update titles
   rankLeftTitle.textContent = leftMovie ? leftMovie.title : "Unknown movie";
   rankRightTitle.textContent = rightMovie ? rightMovie.title : "Unknown movie";
+
+  // Update left poster
+  if (leftMetadata?.poster) {
+    rankLeftPoster.src = leftMetadata.poster;
+    rankLeftPoster.alt = `${leftMovie?.title || "Movie"} poster`;
+    rankLeftPoster.classList.remove("hidden");
+  } else {
+    rankLeftPoster.classList.add("hidden");
+  }
+
+  // Update right poster
+  if (rightMetadata?.poster) {
+    rankRightPoster.src = rightMetadata.poster;
+    rankRightPoster.alt = `${rightMovie?.title || "Movie"} poster`;
+    rankRightPoster.classList.remove("hidden");
+  } else {
+    rankRightPoster.classList.add("hidden");
+  }
+
+  // Update left metadata
+  const leftMetaParts = [];
+  if (leftMetadata?.rating) {
+    leftMetaParts.push(`★ ${leftMetadata.rating.toFixed(1)}`);
+  }
+  if (leftMovie?.year) {
+    leftMetaParts.push(leftMovie.year);
+  }
+  rankLeftMeta.textContent = leftMetaParts.join(" • ");
+
+  // Update right metadata
+  const rightMetaParts = [];
+  if (rightMetadata?.rating) {
+    rightMetaParts.push(`★ ${rightMetadata.rating.toFixed(1)}`);
+  }
+  if (rightMovie?.year) {
+    rightMetaParts.push(rightMovie.year);
+  }
+  rankRightMeta.textContent = rightMetaParts.join(" • ");
 }
 
 function handleRankingChoice(winnerId, loserId) {
