@@ -192,6 +192,17 @@ footer {
   font-size: 0.95rem;
 }
 
+/* Onboarding card */
+
+#onboarding-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-color: #4f46e5;
+}
+
+#onboarding-card h3 {
+  color: #a5b4fc;
+}
+
 /* Discovery buttons on mobile */
 
 @media (max-width: 640px) {

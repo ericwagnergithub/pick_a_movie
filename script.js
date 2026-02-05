@@ -37,7 +37,24 @@ function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (err) {
-    console.warn("Failed to save state:", err);
+    console.error("Failed to save state:", err);
+
+    // Check if it's a quota exceeded error
+    if (err.name === "QuotaExceededError" || err.code === 22) {
+      alert(
+        "⚠️ Browser storage is full!\n\n" +
+        "Your data couldn't be saved. Please:\n" +
+        "1. Export your data (to back it up)\n" +
+        "2. Clear some browser data\n" +
+        "3. Or use a different browser"
+      );
+    } else {
+      alert(
+        "⚠️ Couldn't save your data.\n\n" +
+        "Error: " + err.message + "\n\n" +
+        "Try exporting your data to back it up."
+      );
+    }
   }
 }
 
@@ -106,6 +123,7 @@ function importStateFromFile(file) {
 const screenMainMenu = document.getElementById("screen-main-menu");
 const screenDiscovery = document.getElementById("screen-discovery");
 const screenRanking = document.getElementById("screen-ranking");
+const onboardingCard = document.getElementById("onboarding-card");
 
 // Main menu buttons + stats
 const btnStartDiscovery = document.getElementById("btn-start-discovery");
@@ -188,6 +206,16 @@ function recomputeStats() {
   statSeenCount.textContent = seenCount;
   statNotInterestedCount.textContent = notInterestedCount;
   statUnreviewedCount.textContent = unreviewedCount;
+
+  // Hide onboarding card after user has classified at least 5 movies
+  const totalClassified = watchlistCount + seenCount + notInterestedCount;
+  if (onboardingCard) {
+    if (totalClassified >= 5) {
+      onboardingCard.style.display = "none";
+    } else {
+      onboardingCard.style.display = "block";
+    }
+  }
 }
 
 // --- Discovery Queue ---
