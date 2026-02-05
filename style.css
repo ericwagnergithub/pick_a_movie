@@ -192,6 +192,27 @@ footer {
   font-size: 0.95rem;
 }
 
+#ranking-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  gap: 0.75rem;
+}
+
+.ranking-movie-title {
+  flex: 1;
+}
+
+.ranking-comparison-count {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  padding: 0.2rem 0.5rem;
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 999px;
+}
+
 /* Onboarding card */
 
 #onboarding-card {

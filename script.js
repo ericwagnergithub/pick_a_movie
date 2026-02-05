@@ -9,7 +9,9 @@ let state = {
   classifications: {},
   // ranking arrays hold movie IDs in preference order
   rankingWatchlist: [],
-  rankingSeen: []
+  rankingSeen: [],
+  // comparisonCounts[id] = number of times this movie was compared
+  comparisonCounts: {}
 };
 
 function loadState() {
@@ -26,6 +28,9 @@ function loadState() {
       }
       if (Array.isArray(parsed.rankingSeen)) {
         state.rankingSeen = parsed.rankingSeen;
+      }
+      if (parsed.comparisonCounts && typeof parsed.comparisonCounts === "object") {
+        state.comparisonCounts = parsed.comparisonCounts;
       }
     }
   } catch (err) {
@@ -102,6 +107,11 @@ function importStateFromFile(file) {
       ) {
         alert("Imported data is missing required fields.");
         return;
+      }
+
+      // Ensure comparisonCounts exists (for backward compatibility)
+      if (!importedState.comparisonCounts || typeof importedState.comparisonCounts !== "object") {
+        importedState.comparisonCounts = {};
       }
 
       state = importedState;
@@ -401,7 +411,20 @@ function renderRankingList() {
     const movie = MOVIES.find((m) => m.id === id);
     if (!movie) return;
     const li = document.createElement("li");
-    li.textContent = movie.title;
+    const count = state.comparisonCounts[id] || 0;
+
+    // Create movie title element
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = movie.title;
+    titleSpan.className = "ranking-movie-title";
+
+    // Create comparison count badge
+    const countSpan = document.createElement("span");
+    countSpan.textContent = count > 0 ? `${count} comparisons` : "not yet compared";
+    countSpan.className = "ranking-comparison-count";
+
+    li.appendChild(titleSpan);
+    li.appendChild(countSpan);
     rankingListEl.appendChild(li);
   });
 }
@@ -452,6 +475,10 @@ function handleRankingChoice(winnerId, loserId) {
     pickNextPair();
     return;
   }
+
+  // Increment comparison counts for both movies
+  state.comparisonCounts[winnerId] = (state.comparisonCounts[winnerId] || 0) + 1;
+  state.comparisonCounts[loserId] = (state.comparisonCounts[loserId] || 0) + 1;
 
   // If winner is currently lower than loser, move it just above loser
   if (winnerIndex > loserIndex) {
