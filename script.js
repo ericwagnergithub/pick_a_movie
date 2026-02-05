@@ -11,7 +11,12 @@ let state = {
   rankingWatchlist: [],
   rankingSeen: [],
   // comparisonCounts[id] = number of times this movie was compared
-  comparisonCounts: {}
+  comparisonCounts: {},
+  // comparedPairs[mode][pairKey] = true (tracks which pairs have been compared)
+  comparedPairs: {
+    watchlist: {},
+    seen: {}
+  }
 };
 
 function loadState() {
@@ -31,6 +36,9 @@ function loadState() {
       }
       if (parsed.comparisonCounts && typeof parsed.comparisonCounts === "object") {
         state.comparisonCounts = parsed.comparisonCounts;
+      }
+      if (parsed.comparedPairs && typeof parsed.comparedPairs === "object") {
+        state.comparedPairs = parsed.comparedPairs;
       }
     }
   } catch (err) {
@@ -112,6 +120,14 @@ function importStateFromFile(file) {
       // Ensure comparisonCounts exists (for backward compatibility)
       if (!importedState.comparisonCounts || typeof importedState.comparisonCounts !== "object") {
         importedState.comparisonCounts = {};
+      }
+
+      // Ensure comparedPairs exists (for backward compatibility)
+      if (!importedState.comparedPairs || typeof importedState.comparedPairs !== "object") {
+        importedState.comparedPairs = {
+          watchlist: {},
+          seen: {}
+        };
       }
 
       state = importedState;
@@ -504,6 +520,11 @@ function renderRankingList() {
   });
 }
 
+// Helper function to create a unique pair key (sorted IDs)
+function getPairKey(id1, id2) {
+  return id1 < id2 ? `${id1}_${id2}` : `${id2}_${id1}`;
+}
+
 function pickNextPair() {
   const ranking =
     currentRankingMode === "watchlist"
@@ -517,18 +538,48 @@ function pickNextPair() {
     return;
   }
 
-  rankingPairArea.classList.remove("hidden");
-  rankingEmptyMessage.textContent = "";
-
+  const comparedPairs = state.comparedPairs[currentRankingMode];
   const n = ranking.length;
-  let leftIndex = Math.floor(Math.random() * n);
-  let rightIndex = Math.floor(Math.random() * n);
-  while (rightIndex === leftIndex && n > 1) {
-    rightIndex = Math.floor(Math.random() * n);
+
+  // Try to find an uncompared pair
+  let attempts = 0;
+  const maxAttempts = n * n; // Try up to n^2 times
+  let foundPair = false;
+
+  while (attempts < maxAttempts && !foundPair) {
+    let leftIndex = Math.floor(Math.random() * n);
+    let rightIndex = Math.floor(Math.random() * n);
+
+    // Skip if same movie
+    if (leftIndex === rightIndex) {
+      attempts++;
+      continue;
+    }
+
+    const leftId = ranking[leftIndex];
+    const rightId = ranking[rightIndex];
+    const pairKey = getPairKey(leftId, rightId);
+
+    // Check if this pair has already been compared
+    if (!comparedPairs[pairKey]) {
+      currentLeftId = leftId;
+      currentRightId = rightId;
+      foundPair = true;
+    }
+
+    attempts++;
   }
 
-  currentLeftId = ranking[leftIndex];
-  currentRightId = ranking[rightIndex];
+  // If no uncompared pairs found, show message
+  if (!foundPair) {
+    rankingPairArea.classList.add("hidden");
+    rankingEmptyMessage.textContent =
+      "You've compared all possible pairs! Your ranking is complete. You can reset comparisons or go back to the main menu.";
+    return;
+  }
+
+  rankingPairArea.classList.remove("hidden");
+  rankingEmptyMessage.textContent = "";
 
   const leftMovie = MOVIES.find((m) => m.id === currentLeftId);
   const rightMovie = MOVIES.find((m) => m.id === currentRightId);
@@ -622,6 +673,10 @@ function handleRankingChoice(winnerId, loserId) {
     pickNextPair();
     return;
   }
+
+  // Mark this pair as compared
+  const pairKey = getPairKey(winnerId, loserId);
+  state.comparedPairs[currentRankingMode][pairKey] = true;
 
   // Increment comparison counts for both movies
   state.comparisonCounts[winnerId] = (state.comparisonCounts[winnerId] || 0) + 1;
