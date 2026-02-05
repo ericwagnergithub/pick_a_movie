@@ -147,10 +147,26 @@ function importStateFromFile(file) {
 // --- DOM elements ---
 
 const screenMainMenu = document.getElementById("screen-main-menu");
+const screenDiscoveryFilters = document.getElementById("screen-discovery-filters");
 const screenDiscovery = document.getElementById("screen-discovery");
 const screenRanking = document.getElementById("screen-ranking");
 const screenSettings = document.getElementById("screen-settings");
 const onboardingCard = document.getElementById("onboarding-card");
+
+// Filter elements
+const genreFiltersEl = document.getElementById("genre-filters");
+const decadeFiltersEl = document.getElementById("decade-filters");
+const ratingFilterEl = document.getElementById("rating-filter");
+const btnFiltersBack = document.getElementById("btn-filters-back");
+const btnApplyFilters = document.getElementById("btn-apply-filters");
+const btnClearFilters = document.getElementById("btn-clear-filters");
+
+// Discovery filters state
+let discoveryFilters = {
+  genres: [],
+  decades: [],
+  minRating: 0
+};
 
 // Main menu buttons + stats
 const btnStartDiscovery = document.getElementById("btn-start-discovery");
@@ -212,12 +228,15 @@ const rankingPairArea = document.getElementById("ranking-pair-area");
 // --- Screen helpers ---
 
 function showScreen(name) {
-  const screens = [screenMainMenu, screenDiscovery, screenRanking, screenSettings];
+  const screens = [screenMainMenu, screenDiscoveryFilters, screenDiscovery, screenRanking, screenSettings];
   screens.forEach((s) => s.classList.add("hidden"));
 
   switch (name) {
     case "main":
       screenMainMenu.classList.remove("hidden");
+      break;
+    case "filters":
+      screenDiscoveryFilters.classList.remove("hidden");
       break;
     case "discovery":
       screenDiscovery.classList.remove("hidden");
@@ -229,6 +248,107 @@ function showScreen(name) {
       screenSettings.classList.remove("hidden");
       break;
   }
+}
+
+// --- Discovery Filters ---
+
+function populateFilters() {
+  // Extract unique genres from all movies
+  const allGenres = new Set();
+  MOVIES.forEach(movie => {
+    if (movie.genres) {
+      movie.genres.split(', ').forEach(genre => allGenres.add(genre.trim()));
+    }
+  });
+
+  // Create genre filter chips
+  genreFiltersEl.innerHTML = '';
+  Array.from(allGenres).sort().forEach(genre => {
+    const chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.textContent = genre;
+    chip.dataset.genre = genre;
+    chip.addEventListener('click', () => toggleGenreFilter(genre, chip));
+    genreFiltersEl.appendChild(chip);
+  });
+
+  // Create decade filter chips
+  const decades = ['1920s', '1930s', '1940s', '1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+  decadeFiltersEl.innerHTML = '';
+  decades.forEach(decade => {
+    const chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.textContent = decade;
+    chip.dataset.decade = decade;
+    chip.addEventListener('click', () => toggleDecadeFilter(decade, chip));
+    decadeFiltersEl.appendChild(chip);
+  });
+}
+
+function toggleGenreFilter(genre, chipEl) {
+  const index = discoveryFilters.genres.indexOf(genre);
+  if (index === -1) {
+    discoveryFilters.genres.push(genre);
+    chipEl.classList.add('active');
+  } else {
+    discoveryFilters.genres.splice(index, 1);
+    chipEl.classList.remove('active');
+  }
+}
+
+function toggleDecadeFilter(decade, chipEl) {
+  const index = discoveryFilters.decades.indexOf(decade);
+  if (index === -1) {
+    discoveryFilters.decades.push(decade);
+    chipEl.classList.add('active');
+  } else {
+    discoveryFilters.decades.splice(index, 1);
+    chipEl.classList.remove('active');
+  }
+}
+
+function clearAllFilters() {
+  discoveryFilters = { genres: [], decades: [], minRating: 0 };
+  ratingFilterEl.value = "0";
+
+  // Remove active class from all chips
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.remove('active');
+  });
+}
+
+function applyFiltersToMovies() {
+  let filtered = MOVIES.filter(m => !state.classifications[m.id]);
+
+  // Apply genre filter
+  if (discoveryFilters.genres.length > 0) {
+    filtered = filtered.filter(movie => {
+      if (!movie.genres) return false;
+      const movieGenres = movie.genres.split(', ').map(g => g.trim());
+      return discoveryFilters.genres.some(genre => movieGenres.includes(genre));
+    });
+  }
+
+  // Apply decade filter
+  if (discoveryFilters.decades.length > 0) {
+    filtered = filtered.filter(movie => {
+      const year = movie.year;
+      return discoveryFilters.decades.some(decade => {
+        const startYear = parseInt(decade.substring(0, 4));
+        return year >= startYear && year < startYear + 10;
+      });
+    });
+  }
+
+  // Apply rating filter
+  if (discoveryFilters.minRating > 0) {
+    filtered = filtered.filter(movie => {
+      const metadata = MOVIE_METADATA?.[movie.id];
+      return metadata && metadata.rating >= discoveryFilters.minRating;
+    });
+  }
+
+  return filtered;
 }
 
 // --- Stats ---
@@ -275,8 +395,18 @@ function getUnreviewedMovies() {
 }
 
 function buildDiscoveryBatch() {
-  const unreviewed = getUnreviewedMovies();
-  currentBatch = unreviewed.slice(0, DISCOVERY_BATCH_SIZE).map((m) => m.id);
+  // Apply filters to get the movie pool
+  const filteredMovies = applyFiltersToMovies();
+
+  if (filteredMovies.length === 0) {
+    currentBatch = [];
+    currentBatchIndex = 0;
+    return;
+  }
+
+  // Shuffle and take a batch
+  const shuffled = filteredMovies.sort(() => Math.random() - 0.5);
+  currentBatch = shuffled.slice(0, DISCOVERY_BATCH_SIZE).map((m) => m.id);
   currentBatchIndex = 0;
 }
 
@@ -722,7 +852,7 @@ function handleRankingChoice(winnerId, loserId) {
 function attachEventListeners() {
   // Main menu
   btnStartDiscovery.addEventListener("click", () => {
-    startDiscovery();
+    showScreen("filters");
   });
 
   btnRankWatchlist.addEventListener("click", () => {
@@ -733,7 +863,21 @@ function attachEventListeners() {
     startRanking("seen");
   });
 
-  
+  // Filter screen
+  btnFiltersBack.addEventListener("click", () => {
+    showScreen("main");
+  });
+
+  btnApplyFilters.addEventListener("click", () => {
+    discoveryFilters.minRating = parseFloat(ratingFilterEl.value);
+    startDiscovery();
+  });
+
+  btnClearFilters.addEventListener("click", () => {
+    clearAllFilters();
+  });
+
+
   // export / import
   btnExportData.addEventListener("click", () => {
     exportStateToFile();
@@ -851,6 +995,7 @@ function clearRankings(mode) {
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
   attachEventListeners();
+  populateFilters();
   recomputeStats();
   showScreen("main");
 });

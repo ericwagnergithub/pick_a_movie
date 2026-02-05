@@ -60,7 +60,7 @@ function saveCache(cache) {
 async function searchMovie(title, year) {
   const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(
     title
-  )}&year=${year}`;
+  )}&year=${year}&language=en-US`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -72,7 +72,7 @@ async function searchMovie(title, year) {
 }
 
 async function getMovieDetails(tmdbId) {
-  const url = `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=watch/providers,credits`;
+  const url = `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=watch/providers,credits&language=en-US`;
 
   const response = await fetch(url);
   if (!response.ok) {
