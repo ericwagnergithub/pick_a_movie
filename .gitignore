@@ -23,3 +23,6 @@ build/
 # Environment variables
 .env
 .env.local
+
+# Metadata cache (temporary)
+.metadata_cache.json
