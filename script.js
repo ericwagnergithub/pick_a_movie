@@ -149,6 +149,7 @@ function importStateFromFile(file) {
 const screenMainMenu = document.getElementById("screen-main-menu");
 const screenDiscovery = document.getElementById("screen-discovery");
 const screenRanking = document.getElementById("screen-ranking");
+const screenSettings = document.getElementById("screen-settings");
 const onboardingCard = document.getElementById("onboarding-card");
 
 // Main menu buttons + stats
@@ -165,6 +166,12 @@ const statUnreviewedCount = document.getElementById("stat-unreviewed-count");
 const btnExportData = document.getElementById("btn-export-data");
 const btnImportData = document.getElementById("btn-import-data");
 const importFileInput = document.getElementById("import-file-input");
+const btnSettings = document.getElementById("btn-settings");
+
+// Settings elements
+const btnSettingsBack = document.getElementById("btn-settings-back");
+const btnClearWatchlistRankings = document.getElementById("btn-clear-watchlist-rankings");
+const btnClearSeenRankings = document.getElementById("btn-clear-seen-rankings");
 
 // Discovery elements
 const btnDiscoveryBack = document.getElementById("btn-discovery-back");
@@ -205,7 +212,7 @@ const rankingPairArea = document.getElementById("ranking-pair-area");
 // --- Screen helpers ---
 
 function showScreen(name) {
-  const screens = [screenMainMenu, screenDiscovery, screenRanking];
+  const screens = [screenMainMenu, screenDiscovery, screenRanking, screenSettings];
   screens.forEach((s) => s.classList.add("hidden"));
 
   switch (name) {
@@ -217,6 +224,9 @@ function showScreen(name) {
       break;
     case "ranking":
       screenRanking.classList.remove("hidden");
+      break;
+    case "settings":
+      screenSettings.classList.remove("hidden");
       break;
   }
 }
@@ -734,6 +744,23 @@ function attachEventListeners() {
     }
   });
 
+  // Settings
+  btnSettings.addEventListener("click", () => {
+    showScreen("settings");
+  });
+
+  btnSettingsBack.addEventListener("click", () => {
+    showScreen("main");
+  });
+
+  btnClearWatchlistRankings.addEventListener("click", () => {
+    clearRankings("watchlist");
+  });
+
+  btnClearSeenRankings.addEventListener("click", () => {
+    clearRankings("seen");
+  });
+
 
   // Discovery
   btnDiscoveryBack.addEventListener("click", () => {
@@ -775,6 +802,41 @@ function attachEventListeners() {
       handleRankingChoice(currentRightId, currentLeftId);
     }
   });
+}
+
+// --- Settings ---
+
+function clearRankings(mode) {
+  const listName = mode === "watchlist" ? "Watchlist" : "Seen Movies";
+  const ranking = mode === "watchlist" ? state.rankingWatchlist : state.rankingSeen;
+
+  if (ranking.length === 0) {
+    alert(`You don't have any ${listName} to clear rankings for.`);
+    return;
+  }
+
+  const confirmed = confirm(
+    `Are you sure you want to clear all ranking comparisons for your ${listName}?\n\n` +
+    `This will reset:\n` +
+    `• All comparison history for ${listName}\n` +
+    `• Comparison counts for movies in this list\n\n` +
+    `Your ranking order will be preserved, but you can re-compare from scratch.`
+  );
+
+  if (!confirmed) return;
+
+  // Clear compared pairs for this mode
+  state.comparedPairs[mode] = {};
+
+  // Clear comparison counts for movies in this ranking
+  ranking.forEach(movieId => {
+    delete state.comparisonCounts[movieId];
+  });
+
+  saveState();
+  recomputeStats();
+
+  alert(`${listName} ranking comparisons have been cleared! You can now re-rank from scratch.`);
 }
 
 // --- Init ---

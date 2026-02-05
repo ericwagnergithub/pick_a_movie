@@ -51,6 +51,7 @@
         <div class="button-column">
             <button id="btn-export-data">Export my data</button>
             <button id="btn-import-data">Import data</button>
+            <button id="btn-settings">Settings</button>
         </div>
         <input
             type="file"
@@ -58,6 +59,26 @@
             accept="application/json"
             style="display: none"
         />
+        </div>
+      </section>
+
+      <!-- Settings screen -->
+      <section id="screen-settings" class="screen hidden">
+        <div class="card">
+          <div class="screen-header">
+            <h2>Settings</h2>
+            <button class="link-button" id="btn-settings-back">← Back to main menu</button>
+          </div>
+
+          <h3>Clear Rankings</h3>
+          <p class="small-text muted">
+            Clearing rankings will reset all comparison history for that list. You can re-rank from scratch.
+          </p>
+
+          <div class="button-column">
+            <button id="btn-clear-watchlist-rankings">Clear Watchlist Rankings</button>
+            <button id="btn-clear-seen-rankings">Clear Seen Rankings</button>
+          </div>
         </div>
       </section>
 
