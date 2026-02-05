@@ -157,6 +157,7 @@ const discoveryMovieTitle = document.getElementById("discovery-movie-title");
 const discoveryPoster = document.getElementById("discovery-poster");
 const discoveryMovieMeta = document.getElementById("discovery-movie-meta");
 const discoveryMovieOverview = document.getElementById("discovery-movie-overview");
+const discoveryMovieCredits = document.getElementById("discovery-movie-credits");
 const discoveryEmptyMessage = document.getElementById("discovery-empty-message");
 const btnDiscoverySeen = document.getElementById("btn-discovery-seen");
 const btnDiscoveryWatchlist = document.getElementById(
@@ -313,6 +314,21 @@ function renderDiscovery() {
     discoveryMovieOverview.style.display = "block";
   } else {
     discoveryMovieOverview.style.display = "none";
+  }
+
+  // Update credits (cast and director)
+  const creditsParts = [];
+  if (metadata?.director) {
+    creditsParts.push(`<strong>Director:</strong> ${metadata.director}`);
+  }
+  if (metadata?.cast && metadata.cast.length > 0) {
+    creditsParts.push(`<strong>Cast:</strong> ${metadata.cast.join(", ")}`);
+  }
+  if (creditsParts.length > 0) {
+    discoveryMovieCredits.innerHTML = creditsParts.join("<br>");
+    discoveryMovieCredits.style.display = "block";
+  } else {
+    discoveryMovieCredits.style.display = "none";
   }
 
   discoveryProgress.textContent = `Movie ${currentBatchIndex + 1} of ${

@@ -234,6 +234,18 @@ button[disabled] {
   -webkit-box-orient: vertical;
 }
 
+.movie-credits {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 0.6rem;
+  line-height: 1.4;
+}
+
+.movie-credits strong {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
 .small-text {
   font-size: 0.85rem;
   color: #9ca3af;
