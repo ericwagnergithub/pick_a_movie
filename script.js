@@ -490,8 +490,15 @@ function renderRankingList() {
       ? state.rankingWatchlist
       : state.rankingSeen;
 
+  // Sort by comparison count (votes) in descending order
+  const sortedRanking = [...ranking].sort((idA, idB) => {
+    const countA = state.comparisonCounts[idA] || 0;
+    const countB = state.comparisonCounts[idB] || 0;
+    return countB - countA; // Descending order
+  });
+
   rankingListEl.innerHTML = "";
-  ranking.forEach((id, index) => {
+  sortedRanking.forEach((id, index) => {
     const movie = MOVIES.find((m) => m.id === id);
     if (!movie) return;
     const metadata = MOVIE_METADATA?.[id];
