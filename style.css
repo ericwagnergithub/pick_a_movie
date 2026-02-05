@@ -76,6 +76,14 @@ main {
   margin-top: 0.75rem;
 }
 
+/* Discovery buttons in horizontal/grid layout */
+#discovery-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
 button {
   border: none;
   border-radius: 999px;
@@ -280,5 +288,10 @@ footer {
 
   .movie-title-large {
     font-size: 1.1rem;
+  }
+
+  /* Discovery buttons in 2x2 grid on mobile */
+  #discovery-buttons {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
