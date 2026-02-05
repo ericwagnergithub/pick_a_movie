@@ -178,6 +178,10 @@ const rankLeftPoster = document.getElementById("rank-left-poster");
 const rankRightPoster = document.getElementById("rank-right-poster");
 const rankLeftMeta = document.getElementById("rank-left-meta");
 const rankRightMeta = document.getElementById("rank-right-meta");
+const rankLeftCredits = document.getElementById("rank-left-credits");
+const rankRightCredits = document.getElementById("rank-right-credits");
+const rankLeftStreaming = document.getElementById("rank-left-streaming");
+const rankRightStreaming = document.getElementById("rank-right-streaming");
 const btnRankLeft = document.getElementById("btn-rank-left");
 const btnRankRight = document.getElementById("btn-rank-right");
 const rankingListEl = document.getElementById("ranking-list");
@@ -463,23 +467,40 @@ function renderRankingList() {
       : state.rankingSeen;
 
   rankingListEl.innerHTML = "";
-  ranking.forEach((id) => {
+  ranking.forEach((id, index) => {
     const movie = MOVIES.find((m) => m.id === id);
     if (!movie) return;
+    const metadata = MOVIE_METADATA?.[id];
     const li = document.createElement("li");
     const count = state.comparisonCounts[id] || 0;
 
+    // Create movie info container
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "ranking-movie-info";
+
     // Create movie title element
-    const titleSpan = document.createElement("span");
+    const titleSpan = document.createElement("div");
     titleSpan.textContent = movie.title;
     titleSpan.className = "ranking-movie-title";
+    infoDiv.appendChild(titleSpan);
+
+    // Add streaming availability if available
+    if (metadata?.streamingOn && metadata.streamingOn.length > 0) {
+      const streamingDiv = document.createElement("div");
+      streamingDiv.className = "ranking-movie-streaming";
+      const streamingBadges = metadata.streamingOn.slice(0, 3).map(service =>
+        `<span class="streaming-badge">${service}</span>`
+      ).join(" ");
+      streamingDiv.innerHTML = `<strong>Streaming:</strong> ${streamingBadges}`;
+      infoDiv.appendChild(streamingDiv);
+    }
 
     // Create comparison count badge
     const countSpan = document.createElement("span");
-    countSpan.textContent = count > 0 ? `${count} comparisons` : "not yet compared";
+    countSpan.textContent = count > 0 ? `${count} votes` : "not yet compared";
     countSpan.className = "ranking-comparison-count";
 
-    li.appendChild(titleSpan);
+    li.appendChild(infoDiv);
     li.appendChild(countSpan);
     rankingListEl.appendChild(li);
   });
@@ -557,6 +578,58 @@ function pickNextPair() {
     rightMetaParts.push(rightMovie.year);
   }
   rankRightMeta.textContent = rightMetaParts.join(" • ");
+
+  // Update left credits
+  const leftCreditsParts = [];
+  if (leftMetadata?.director) {
+    leftCreditsParts.push(`<strong>Dir:</strong> ${leftMetadata.director}`);
+  }
+  if (leftMetadata?.cast && leftMetadata.cast.length > 0) {
+    leftCreditsParts.push(`<strong>Cast:</strong> ${leftMetadata.cast.slice(0, 3).join(", ")}`);
+  }
+  if (leftCreditsParts.length > 0) {
+    rankLeftCredits.innerHTML = leftCreditsParts.join("<br>");
+    rankLeftCredits.style.display = "block";
+  } else {
+    rankLeftCredits.style.display = "none";
+  }
+
+  // Update right credits
+  const rightCreditsParts = [];
+  if (rightMetadata?.director) {
+    rightCreditsParts.push(`<strong>Dir:</strong> ${rightMetadata.director}`);
+  }
+  if (rightMetadata?.cast && rightMetadata.cast.length > 0) {
+    rightCreditsParts.push(`<strong>Cast:</strong> ${rightMetadata.cast.slice(0, 3).join(", ")}`);
+  }
+  if (rightCreditsParts.length > 0) {
+    rankRightCredits.innerHTML = rightCreditsParts.join("<br>");
+    rankRightCredits.style.display = "block";
+  } else {
+    rankRightCredits.style.display = "none";
+  }
+
+  // Update left streaming
+  if (leftMetadata?.streamingOn && leftMetadata.streamingOn.length > 0) {
+    const streamingBadges = leftMetadata.streamingOn.slice(0, 3).map(service =>
+      `<span class="streaming-badge">${service}</span>`
+    ).join(" ");
+    rankLeftStreaming.innerHTML = streamingBadges;
+    rankLeftStreaming.style.display = "block";
+  } else {
+    rankLeftStreaming.style.display = "none";
+  }
+
+  // Update right streaming
+  if (rightMetadata?.streamingOn && rightMetadata.streamingOn.length > 0) {
+    const streamingBadges = rightMetadata.streamingOn.slice(0, 3).map(service =>
+      `<span class="streaming-badge">${service}</span>`
+    ).join(" ");
+    rankRightStreaming.innerHTML = streamingBadges;
+    rankRightStreaming.style.display = "block";
+  } else {
+    rankRightStreaming.style.display = "none";
+  }
 }
 
 function handleRankingChoice(winnerId, loserId) {
