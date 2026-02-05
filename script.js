@@ -180,8 +180,6 @@ const rankLeftMeta = document.getElementById("rank-left-meta");
 const rankRightMeta = document.getElementById("rank-right-meta");
 const rankLeftCredits = document.getElementById("rank-left-credits");
 const rankRightCredits = document.getElementById("rank-right-credits");
-const rankLeftStreaming = document.getElementById("rank-left-streaming");
-const rankRightStreaming = document.getElementById("rank-right-streaming");
 const btnRankLeft = document.getElementById("btn-rank-left");
 const btnRankRight = document.getElementById("btn-rank-right");
 const rankingListEl = document.getElementById("ranking-list");
@@ -609,27 +607,6 @@ function pickNextPair() {
     rankRightCredits.style.display = "none";
   }
 
-  // Update left streaming
-  if (leftMetadata?.streamingOn && leftMetadata.streamingOn.length > 0) {
-    const streamingBadges = leftMetadata.streamingOn.slice(0, 3).map(service =>
-      `<span class="streaming-badge">${service}</span>`
-    ).join(" ");
-    rankLeftStreaming.innerHTML = streamingBadges;
-    rankLeftStreaming.style.display = "block";
-  } else {
-    rankLeftStreaming.style.display = "none";
-  }
-
-  // Update right streaming
-  if (rightMetadata?.streamingOn && rightMetadata.streamingOn.length > 0) {
-    const streamingBadges = rightMetadata.streamingOn.slice(0, 3).map(service =>
-      `<span class="streaming-badge">${service}</span>`
-    ).join(" ");
-    rankRightStreaming.innerHTML = streamingBadges;
-    rankRightStreaming.style.display = "block";
-  } else {
-    rankRightStreaming.style.display = "none";
-  }
 }
 
 function handleRankingChoice(winnerId, loserId) {

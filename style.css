@@ -328,13 +328,6 @@ footer {
   font-weight: 600;
 }
 
-.ranking-streaming {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin: 0.3rem 0;
-  text-align: center;
-}
-
 .streaming-badge {
   display: inline-block;
   background: #059669;
